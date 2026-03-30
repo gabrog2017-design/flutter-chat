@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class TypingIndicator extends StatefulWidget {
   const TypingIndicator({super.key});
-  @override State<TypingIndicator> createState() => _TypingIndicatorState();
+  @override
+  State<TypingIndicator> createState() => _TypingIndicatorState();
 }
 
 class _TypingIndicatorState extends State<TypingIndicator>
@@ -20,7 +21,10 @@ class _TypingIndicatorState extends State<TypingIndicator>
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +32,18 @@ class _TypingIndicatorState extends State<TypingIndicator>
       opacity: _anim,
       child: Container(
         margin: const EdgeInsets.only(left: 14, bottom: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          // surfaceVariant fue eliminado en Flutter 3.22+ → surfaceContainerHighest
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          _dot(), const SizedBox(width: 4),
-          _dot(), const SizedBox(width: 4),
+          _dot(),
+          const SizedBox(width: 4),
+          _dot(),
+          const SizedBox(width: 4),
           _dot(),
         ]),
       ),
@@ -43,7 +51,8 @@ class _TypingIndicatorState extends State<TypingIndicator>
   }
 
   Widget _dot() => Container(
-      width: 7, height: 7,
-      decoration: BoxDecoration(
-          color: Colors.grey, shape: BoxShape.circle));
+      width: 7,
+      height: 7,
+      decoration:
+          const BoxDecoration(color: Colors.grey, shape: BoxShape.circle));
 }
