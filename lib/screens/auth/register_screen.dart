@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import '../../core/api.dart';
 import '../../core/socket.dart';
 import '../../core/storage.dart';
+import '../../core/call_manager.dart';
 import '../chat/chat_list_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
-  @override State<RegisterScreen> createState() => _RegisterScreenState();
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
@@ -21,11 +23,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _error = 'Please fill all fields');
       return;
     }
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
-      final res = await Api.post('/auth/register',
-          {'username': _user.text.trim(), 'password': _pass.text, 'language': _lang},
-          auth: false);
+      final res = await Api.post(
+        '/auth/register',
+        {
+          'username': _user.text.trim(),
+          'password': _pass.text,
+          'language': _lang
+        },
+        auth: false,
+      );
       if (res['token'] != null) {
         await Storage.setToken(res['token']);
         await Storage.setUserId(res['user']['id']);
@@ -33,8 +44,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         await Storage.setAvatar(res['user']['avatar'] ?? '');
         await Storage.setLanguage(_lang);
         SocketService.connect();
+        CallManager.setupListeners(); // <-- llamadas globales activas
         if (mounted) {
-          Navigator.pushAndRemoveUntil(context,
+          Navigator.pushAndRemoveUntil(
+              context,
               MaterialPageRoute(builder: (_) => const ChatListScreen()),
               (_) => false);
         }
@@ -93,8 +106,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: FilledButton(
               onPressed: _loading ? null : _register,
               child: _loading
-                  ? const SizedBox(height: 20, width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white))
                   : const Text('Register'),
             ),
           ),
