@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-// Generado por flutter gen-l10n (se ejecuta automáticamente con generate: true)
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'core/storage.dart';
 import 'core/socket.dart';
+import 'core/call_manager.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/chat/chat_list_screen.dart';
+
+// Clave global para que CallManager pueda mostrar diálogos desde cualquier pantalla
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Storage.init();
-  if (Storage.isLoggedIn()) SocketService.connect();
+
+  // Registrar la key antes de conectar el socket
+  CallManager.init(navigatorKey);
+
+  if (Storage.isLoggedIn()) {
+    SocketService.connect();
+    CallManager.setupListeners();
+  }
+
   runApp(const ChatApp());
 }
 
@@ -20,6 +31,7 @@ class ChatApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,   // <-- clave para el diálogo global
       title: 'Chat',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
