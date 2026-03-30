@@ -34,6 +34,7 @@ android {
         release {
             signingConfig signingConfigs.debug
             minifyEnabled false
+            shrinkResources false   // <-- esta línea faltaba, causaba el error
         }
     }
 }
