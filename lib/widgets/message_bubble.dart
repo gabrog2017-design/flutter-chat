@@ -20,9 +20,10 @@ class MessageBubble extends StatelessWidget {
         constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.72),
         decoration: BoxDecoration(
+          // surfaceVariant fue eliminado en Flutter 3.22+ → surfaceContainerHighest
           color: isMe
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(18),
             topRight: const Radius.circular(18),
@@ -49,16 +50,18 @@ class MessageBubble extends StatelessWidget {
                   imageUrl: msg.content,
                   width: 220,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) =>
-                      const SizedBox(height: 120, child: Center(child: CircularProgressIndicator())),
-                  errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
+                  placeholder: (_, __) => const SizedBox(
+                      height: 120,
+                      child: Center(child: CircularProgressIndicator())),
+                  errorWidget: (_, __, ___) =>
+                      const Icon(Icons.broken_image),
                 ),
               )
             else
               Text(
                 msg.content,
-                style: TextStyle(
-                    color: isMe ? Colors.white : null, fontSize: 15),
+                style:
+                    TextStyle(color: isMe ? Colors.white : null, fontSize: 15),
               ),
             const SizedBox(height: 2),
             Row(
@@ -85,7 +88,8 @@ class MessageBubble extends StatelessWidget {
   Widget _statusIcon(String status) {
     switch (status) {
       case 'read':
-        return const Icon(Icons.done_all, size: 14, color: Colors.lightBlueAccent);
+        return const Icon(Icons.done_all,
+            size: 14, color: Colors.lightBlueAccent);
       case 'delivered':
         return const Icon(Icons.done_all, size: 14, color: Colors.white60);
       default:
