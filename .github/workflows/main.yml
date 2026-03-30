@@ -21,12 +21,25 @@ jobs:
           channel: 'stable'
           cache: true
 
+      # Genera los íconos del launcher con ImageMagick (ya viene en ubuntu-latest)
+      # Sin esto el build falla con "mipmap/ic_launcher not found"
+      - name: Generate launcher icons
+        run: |
+          for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+            mkdir -p android/app/src/main/res/$dir
+          done
+          convert -size 48x48   xc:#1565C0 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          convert -size 72x72   xc:#1565C0 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          convert -size 96x96   xc:#1565C0 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          convert -size 144x144 xc:#1565C0 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          convert -size 192x192 xc:#1565C0 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          for size in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp android/app/src/main/res/mipmap-$size/ic_launcher.png \
+               android/app/src/main/res/mipmap-$size/ic_launcher_round.png
+          done
+
       - name: Install dependencies
         run: flutter pub get
-
-      # flutter gen-l10n ya NO es necesario aquí:
-      # con "generate: true" en pubspec.yaml, "flutter build" lo hace automáticamente.
-      # Dejarlo causaba un error de "tool not found" en algunas versiones del runner.
 
       - name: Build APK
         run: flutter build apk --release --split-per-abi
