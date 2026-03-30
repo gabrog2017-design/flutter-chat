@@ -1,0 +1,40 @@
+name: flutter_chat
+description: Telegram-like chat app
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Networking
+  http: ^1.1.0
+  socket_io_client: ^2.0.3+1
+
+  # WebRTC
+  flutter_webrtc: ^0.9.47
+
+  # Storage
+  shared_preferences: ^2.2.2
+
+  # Media
+  image_picker: ^1.0.4
+  cached_network_image: ^3.3.0
+
+  # State
+  provider: ^6.1.1
+
+  # i18n
+  intl: ^0.18.1
+
+  # UI
+  timeago: ^3.6.0
+
+flutter:
+  uses-material-design: true
+  generate: true
