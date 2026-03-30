@@ -1,38 +1,24 @@
-plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
-}
-
-android {
-    namespace "com.easybrand.chat"
-    compileSdk 35
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+buildscript {
+    ext.kotlin_version = '2.0.0'
+    repositories {
+        google()
+        mavenCentral()
     }
-
-    kotlinOptions { jvmTarget = "1.8" }
-
-    defaultConfig {
-        applicationId "com.easybrand.chat"
-        minSdk 21
-        targetSdk 35
-        versionCode 1
-        versionName "1.0.0"
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-            minifyEnabled false
-        }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.3.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
-flutter { source "../.." }
-
-dependencies {
-    implementation "androidx.multidex:multidex:2.0.1"
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
+
+rootProject.buildDir = '../build'
+subprojects { project.buildDir = "${rootProject.buildDir}/${project.name}" }
+subprojects { project.evaluationDependsOn(':app') }
+
+tasks.register("clean", Delete) { delete rootProject.buildDir }
