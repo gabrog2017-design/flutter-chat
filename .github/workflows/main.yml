@@ -16,17 +16,10 @@ jobs:
         with:
           flutter-version: '3.27.4'
           channel: 'stable'
-      - name: Get dependencies
-        run: flutter pub get
-        working-directory: flutter-chat
-      - name: Generate l10n
-        run: flutter gen-l10n
-        working-directory: flutter-chat
-      - name: Build APK
-        run: flutter build apk --release --split-per-abi
-        working-directory: flutter-chat
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - run: flutter build apk --release --split-per-abi
+      - uses: actions/upload-artifact@v4
         with:
           name: chat-app-apk
-          path: flutter-chat/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
