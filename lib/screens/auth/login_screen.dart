@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../../core/api.dart';
 import '../../core/socket.dart';
 import '../../core/storage.dart';
+import '../../core/call_manager.dart';
 import '../chat/chat_list_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-  @override State<LoginScreen> createState() => _LoginScreenState();
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -21,17 +23,23 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _error = 'Please fill all fields');
       return;
     }
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
-      final res = await Api.post('/auth/login',
-          {'username': _user.text.trim(), 'password': _pass.text},
-          auth: false);
+      final res = await Api.post(
+        '/auth/login',
+        {'username': _user.text.trim(), 'password': _pass.text},
+        auth: false,
+      );
       if (res['token'] != null) {
         await Storage.setToken(res['token']);
         await Storage.setUserId(res['user']['id']);
         await Storage.setUsername(res['user']['username']);
         await Storage.setAvatar(res['user']['avatar'] ?? '');
         SocketService.connect();
+        CallManager.setupListeners(); // <-- llamadas globales activas
         if (mounted) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (_) => const ChatListScreen()));
@@ -56,8 +64,11 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(children: [
               const Icon(Icons.chat_bubble_rounded, size: 72, color: Colors.blue),
               const SizedBox(height: 16),
-              Text('Chat', style: Theme.of(context).textTheme.headlineMedium
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+              Text('Chat',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 36),
               TextField(
                 controller: _user,
@@ -86,8 +97,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: FilledButton(
                   onPressed: _loading ? null : _login,
                   child: _loading
-                      ? const SizedBox(height: 20, width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white))
                       : const Text('Login'),
                 ),
               ),
